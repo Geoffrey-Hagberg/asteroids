@@ -3,6 +3,7 @@ from constants import *
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
+from shot import Shot
 from circleshape import CircleShape
 
 def game_loop():
@@ -10,9 +11,11 @@ def game_loop():
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
+    shots = pygame.sprite.Group()
     Player.containers = (updatable, drawable)
     Asteroid.containers = (updatable, drawable, asteroids)
     AsteroidField.containers = (updatable)
+    Shot.containers = (updatable, drawable, shots)
     # set up several components necessary for the logic within the loop
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     game_clock = pygame.time.Clock()
@@ -30,15 +33,22 @@ def game_loop():
         dt = dt_ms / 1000 # converting to seconds
         # draw background
         screen.fill("black")
-        # main logic to check updates, redraw objects, and refresh the displayed screen
+        # main logic
+        # update and draw entities
         for entity in updatable:
             entity.update(dt)
         for entity in drawable:
             entity.draw(screen)
+        # check lose condition
         for asteroid in asteroids:
+            for shot in shots:
+                if asteroid.check_collisions(shot):
+                    asteroid.split()
+                    shot.kill()
             if asteroid.check_collisions(player):
                 print("Game over!")
                 exit()
+        # update displayed visuals
         pygame.display.flip()
 
 def main():
