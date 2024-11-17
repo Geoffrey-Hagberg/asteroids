@@ -12,3 +12,5 @@ TODO:
 - add scoring system
 - add asteroids wrapping around screen instead of moving off screen
 - add random events (a la the UFO in original)
+- pixel-art starfield background; as score reaches certain milestones, background changes
+- randomize color of asteroids within a range of browns and grays
