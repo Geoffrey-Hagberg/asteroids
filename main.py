@@ -61,7 +61,7 @@ def game_loop():
 
 def main():
     pygame.init()
-    print("Starting asteroids!")
+    print("Starting Oids!")
     game_loop()
 
 if __name__ == "__main__":
