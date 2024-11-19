@@ -1,5 +1,6 @@
 import pygame
 from constants import *
+from surfaces import MainDisplay
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
@@ -17,7 +18,7 @@ def game_loop():
     AsteroidField.containers = (updatable)
     Shot.containers = (updatable, drawable, shots)
     # set up several components necessary for the logic within the loop
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    game_display = MainDisplay()
     game_clock = pygame.time.Clock()
     dt = 0
     # set up objects representing player and asteroid field
@@ -28,17 +29,16 @@ def game_loop():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
-        # set the timing of the loop
+        # set the state of the loop each tick
+        game_display.fill_surface("black")
         dt_ms = game_clock.tick(60) # 60 fps
         dt = dt_ms / 1000 # converting to seconds
-        # draw background
-        screen.fill("black")
         # main logic
         # update and draw entities
         for entity in updatable:
             entity.update(dt)
         for entity in drawable:
-            entity.draw(screen)
+            entity.draw(game_display.main_display)
         # check lose condition
         for asteroid in asteroids:
             for shot in shots:

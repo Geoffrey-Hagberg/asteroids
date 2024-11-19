@@ -23,7 +23,9 @@ class Player(CircleShape):
 #        forward = pygame.Vector2(0, 1).rotate(self.rotation)
 #        self.position += forward * PLAYER_SPEED * dt
     def shoot(self):
-        shot = Shot(self.position.x, self.position.y)
+        forward = pygame.Vector2(0, 1).rotate(self.rotation)
+        spawn_position = self.position + forward * self.radius
+        shot = Shot(spawn_position.x, spawn_position.y)
         shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
         self.timer = PLAYER_SHOOT_COOLDOWN
     def update(self, dt):
