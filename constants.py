@@ -1,3 +1,6 @@
+import pygame
+pygame.font.init()
+
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 
@@ -15,3 +18,6 @@ PLAYER_SHOOT_COOLDOWN = 0.4
 SHOT_RADIUS = 3
 
 SCORE_SCALAR = 30
+SCORE_DIMENSIONS = (480, 240)
+SCORE_POSITION = (8, 0)
+SCORE_FONT = pygame.font.SysFont("helveticaneue", 36)
