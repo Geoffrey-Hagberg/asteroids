@@ -6,7 +6,7 @@ from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
 from circleshape import CircleShape
-from score import update_score
+from score import update_score, check_score
 
 def game_loop():
     # set up the groups for classes/objects
@@ -31,7 +31,7 @@ def game_loop():
         # provide a way to close the game
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                print(f"Final score: {current_score}")
+                check_score(current_score)
                 return
         # set the state of the loop each tick
         game_display.fill_surface("black")
@@ -53,7 +53,7 @@ def game_loop():
                     shot.kill()
             if asteroid.check_collisions(player):
                 print("Game over!")
-                print(f"Final score: {current_score}")
+                check_score(current_score)
                 exit()
         # update displayed visuals
         game_display.render_surface(score_display.render_text(), SCORE_POSITION)
