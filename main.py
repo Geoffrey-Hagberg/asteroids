@@ -1,6 +1,6 @@
 import pygame
 from constants import *
-from surfaces import MainDisplay, TextDisplay
+from surfaces import MainDisplay, TextDisplay, ProgressDisplay, ShieldProgressDisplay
 from player import Player, Shield
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
@@ -19,16 +19,17 @@ def game_loop():
     Asteroid.containers = (updatable, drawable, asteroids)
     AsteroidField.containers = (updatable)
     Shot.containers = (updatable, drawable, shots)
-    # set up several components necessary for the logic within the loop
-    game_display = MainDisplay()
-    current_score = 0
-    score_display = TextDisplay(SCORE_DIMENSIONS, "orange", SCORE_FONT, current_score)
-    game_clock = pygame.time.Clock()
-    dt = 0
-    # set up objects representing player and asteroid field
+    # set up objects representing various entities and values
     player = Player((SCREEN_WIDTH / 2), (SCREEN_HEIGHT / 2))
     shield = Shield((SCREEN_WIDTH / 2), (SCREEN_HEIGHT / 2))
     asteroid_field = AsteroidField()
+    current_score = 0
+    # set up components necessary for the display and logic
+    game_display = MainDisplay()
+    score_display = TextDisplay(SCORE_DIMENSIONS, "orange", SCORE_FONT, current_score)
+    shield_charge_display = ShieldProgressDisplay(SHIELD_CHARGE_DIMENSIONS, SHIELD_CHARGE_POSITION, SHIELD_CHARGE_PROGRESS_COLOR, SHIELD_CHARGE_RATE_COLOR, shield.current_charge, SHIELD_FULL_CHARGE, SHIELD_RECHARGE_RATE)
+    game_clock = pygame.time.Clock()
+    dt = 0
     while True:
         # provide a way to close the game
         for event in pygame.event.get():
@@ -45,6 +46,7 @@ def game_loop():
             entity.update(dt)
         for entity in drawable:
             entity.draw(game_display.main_display)
+        shield_charge_display.update_value(shield.current_charge)
         # check lose condition
         for asteroid in asteroids:
             for shot in shots:
@@ -64,6 +66,7 @@ def game_loop():
                     exit()
         # update displayed visuals
         game_display.render_surface(score_display.render_text(), SCORE_POSITION)
+        shield_charge_display.render_shield(game_display.main_display, shield)
         pygame.display.flip()
 
 def main():
