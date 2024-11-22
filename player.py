@@ -1,6 +1,6 @@
 import pygame
 from circleshape import CircleShape
-from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN
+from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN, SHIELD_RADIUS, SHIELD_ACTIVE_COLOR, SHIELD_INACTIVE_COLOR, SHIELD_FULL_CHARGE, SHIELD_RECHARGE_RATE, SHIELD_RECHARGE_SCALAR
 from shot import Shot
 
 class Player(CircleShape):
@@ -42,3 +42,29 @@ class Player(CircleShape):
             self.rotate(dt)
         if keys[pygame.K_SPACE] and self.timer <= 0:
             self.shoot()
+
+class Shield(CircleShape):
+    def __init__(self, x, y):
+        super().__init__(x, y, SHIELD_RADIUS)
+        self.active = True
+        self.current_charge = 0
+    def draw(self, screen):
+        if self.active:
+            color = SHIELD_ACTIVE_COLOR
+        else:
+            color = SHIELD_INACTIVE_COLOR
+        pygame.draw.circle(screen, color, self.position, self.radius, 2)
+    def update(self, dt):
+        if not self.active:
+            if self.current_charge >= SHIELD_FULL_CHARGE:
+                self.active = True
+                self.current_charge = 0
+            else:
+                self.current_charge += SHIELD_RECHARGE_RATE
+    def asteroid_charge(self, asteroid):
+        if not self.active:
+            charge = asteroid.scale * SHIELD_RECHARGE_SCALAR
+            self.current_charge += charge
+    def collision(self, asteroid):
+        self.active = False
+        asteroid.kill()

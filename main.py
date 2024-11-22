@@ -1,7 +1,7 @@
 import pygame
 from constants import *
 from surfaces import MainDisplay, TextDisplay
-from player import Player
+from player import Player, Shield
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
@@ -15,6 +15,7 @@ def game_loop():
     asteroids = pygame.sprite.Group()
     shots = pygame.sprite.Group()
     Player.containers = (updatable, drawable)
+    Shield.containers = (updatable, drawable)
     Asteroid.containers = (updatable, drawable, asteroids)
     AsteroidField.containers = (updatable)
     Shot.containers = (updatable, drawable, shots)
@@ -26,6 +27,7 @@ def game_loop():
     dt = 0
     # set up objects representing player and asteroid field
     player = Player((SCREEN_WIDTH / 2), (SCREEN_HEIGHT / 2))
+    shield = Shield((SCREEN_WIDTH / 2), (SCREEN_HEIGHT / 2))
     asteroid_field = AsteroidField()
     while True:
         # provide a way to close the game
@@ -49,19 +51,24 @@ def game_loop():
                 if asteroid.check_collisions(shot):
                     current_score = update_score(asteroid, current_score)
                     score_display.update_value(current_score)
+                    shield.asteroid_charge(asteroid)
                     asteroid.split()
                     shot.kill()
-            if asteroid.check_collisions(player):
-                print("Game over!")
-                check_score(current_score)
-                exit()
+            if shield.active:
+                if asteroid.check_collisions(shield):
+                    shield.collision(asteroid)
+            else:
+                if asteroid.check_collisions(player):
+                    print("Game over!")
+                    check_score(current_score)
+                    exit()
         # update displayed visuals
         game_display.render_surface(score_display.render_text(), SCORE_POSITION)
         pygame.display.flip()
 
 def main():
     pygame.init()
-    print("Starting Oids!")
+    print("Starting oids!")
     game_loop()
 
 if __name__ == "__main__":
