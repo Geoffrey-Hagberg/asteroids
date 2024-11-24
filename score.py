@@ -3,6 +3,13 @@ import os
 from constants import SCORE_SCALAR, SCORE_PATH
 from asteroid import Asteroid
 
+def set_up_score(path):
+    directory = os.path.dirname(path)
+    if not os.path.exists(path):
+        if not os.path.exists(directory):
+            os.mkdir(directory)
+        with open(path, "w") as score_file:
+            score_file.write("0")
 def update_score(asteroid, original_score):
     score_modifier = SCORE_SCALAR / asteroid.scale
     current_score = int(original_score + score_modifier)

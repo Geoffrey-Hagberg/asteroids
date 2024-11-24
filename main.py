@@ -6,9 +6,10 @@ from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
 from circleshape import CircleShape
-from score import update_score, check_score
+from score import update_score, check_score, set_up_score
 
 def game_loop():
+    set_up_score("./local/high_score.txt")
     # set up the groups for classes/objects
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
