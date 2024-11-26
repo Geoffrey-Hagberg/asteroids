@@ -48,8 +48,16 @@ def game_loop():
         for entity in drawable:
             entity.draw(game_display.main_display)
         shield_charge_display.update_value(shield.current_charge)
-        # check lose condition
+        asteroid_field.cleanup(asteroids)
+        # check collision conditions
         for asteroid in asteroids:
+            other_asteroids = asteroids.copy()
+            other_asteroids.remove(asteroid)
+            for other_asteroid in other_asteroids:
+                if asteroid.z == other_asteroid.z:
+                    if asteroid.check_collisions(other_asteroid):
+                        asteroid.split()
+                        other_asteroid.split()
             for shot in shots:
                 if asteroid.check_collisions(shot):
                     current_score = update_score(asteroid, current_score)
