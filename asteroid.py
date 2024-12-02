@@ -1,7 +1,7 @@
 import pygame
 import random
 from circleshape import CircleShape
-from constants import ASTEROID_SCALAR
+from constants import ASTEROID_SCALAR, Z1_COLOR, Z2_COLOR, Z3_COLOR
 
 class Asteroid(CircleShape):
     def __init__(self, x, y, z, scale):
@@ -9,8 +9,16 @@ class Asteroid(CircleShape):
         self.scale = scale
         calc_radius = scale * ASTEROID_SCALAR
         super().__init__(x, y, calc_radius)
+    def get_color(self):
+        if self.z == 1:
+            return Z1_COLOR
+        elif self.z == 2:
+            return Z2_COLOR
+        elif self.z == 3:
+            return Z3_COLOR
     def draw(self, screen):
-        pygame.draw.circle(screen, "white", self.position, self.radius, 2)
+        color = self.get_color()
+        pygame.draw.circle(screen, color, self.position, self.radius, 2)
     def update(self, dt):
         self.position += self.velocity * dt
     def get_split_z(self):
