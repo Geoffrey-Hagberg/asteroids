@@ -7,6 +7,7 @@ from asteroidfield import AsteroidField
 from shot import Shot
 from circleshape import CircleShape
 from score import update_score, check_score, set_up_score
+from biome import Biome, biome_colors, update_biome
 
 def game_loop():
     set_up_score("./local/high_score.txt")
@@ -25,10 +26,12 @@ def game_loop():
     shield = Shield((SCREEN_WIDTH / 2), (SCREEN_HEIGHT / 2))
     asteroid_field = AsteroidField()
     current_score = 0
+    current_biome = Biome.START
     # set up components necessary for the display and logic
     game_display = MainDisplay()
-    score_display = TextDisplay(SCORE_DIMENSIONS, "orange", SCORE_FONT, current_score)
-    shield_charge_display = ShieldProgressDisplay(SHIELD_CHARGE_DIMENSIONS, SHIELD_CHARGE_POSITION, SHIELD_CHARGE_PROGRESS_COLOR, SHIELD_CHARGE_RATE_COLOR, shield.current_charge, SHIELD_FULL_CHARGE, SHIELD_RECHARGE_RATE)
+    ui_color = biome_colors("UI", current_biome)
+    score_display = TextDisplay(SCORE_DIMENSIONS, ui_color, SCORE_FONT, current_score)
+    shield_charge_display = ShieldProgressDisplay(SHIELD_CHARGE_DIMENSIONS, SHIELD_CHARGE_POSITION, ui_color, SHIELD_CHARGE_RATE_COLOR, shield.current_charge, SHIELD_FULL_CHARGE, SHIELD_RECHARGE_RATE)
     game_clock = pygame.time.Clock()
     dt = 0
     while True:
@@ -44,9 +47,9 @@ def game_loop():
         # main logic
         # update and draw entities
         for entity in updatable:
-            entity.update(dt)
+            entity.update(dt, current_biome)
         for entity in drawable:
-            entity.draw(game_display.main_display)
+            entity.draw(game_display.main_display, current_biome)
         shield_charge_display.update_value(shield.current_charge)
         asteroid_field.cleanup(asteroids)
         # check collision conditions
@@ -61,6 +64,7 @@ def game_loop():
             for shot in shots:
                 if asteroid.check_collisions(shot):
                     current_score = update_score(asteroid, current_score)
+                    current_biome = update_biome(current_score, current_biome)
                     score_display.update_value(current_score)
                     shield.asteroid_charge(asteroid)
                     asteroid.split()

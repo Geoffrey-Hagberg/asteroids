@@ -2,6 +2,7 @@ import pygame
 from circleshape import CircleShape
 from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN, SHIELD_RADIUS, SHIELD_ACTIVE_COLOR, SHIELD_INACTIVE_COLOR, SHIELD_FULL_CHARGE, SHIELD_RECHARGE_RATE, SHIELD_RECHARGE_SCALAR
 from shot import Shot
+from biome import biome_colors
 
 class Player(CircleShape):
     def __init__(self, x, y):
@@ -15,8 +16,9 @@ class Player(CircleShape):
         b = self.position - forward * self.radius - right
         c = self.position - forward * self.radius + right
         return [a, b, c]
-    def draw(self, screen):
-        pygame.draw.polygon(screen, "orange", self.triangle(), 2)
+    def draw(self, screen, current_biome):
+        color = biome_colors("UI", current_biome)
+        pygame.draw.polygon(screen, color, self.triangle(), 2)
     def rotate(self, dt):
         self.rotation += (PLAYER_TURN_SPEED * dt)
 #    def move(self, dt):
@@ -28,7 +30,7 @@ class Player(CircleShape):
         shot = Shot(spawn_position.x, spawn_position.y)
         shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
         self.timer = PLAYER_SHOOT_COOLDOWN
-    def update(self, dt):
+    def update(self, dt, current_biome):
         if self.timer > 0:
             self.timer -= dt
         keys = pygame.key.get_pressed()
@@ -48,13 +50,13 @@ class Shield(CircleShape):
         super().__init__(x, y, SHIELD_RADIUS)
         self.active = True
         self.current_charge = 0
-    def draw(self, screen):
+    def draw(self, screen, current_biome):
         if self.active:
             color = SHIELD_ACTIVE_COLOR
         else:
             color = SHIELD_INACTIVE_COLOR
         pygame.draw.circle(screen, color, self.position, self.radius, 2)
-    def update(self, dt):
+    def update(self, dt, current_biome):
         if not self.active:
             if self.current_charge >= SHIELD_FULL_CHARGE:
                 self.active = True
