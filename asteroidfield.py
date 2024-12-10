@@ -1,6 +1,6 @@
 import pygame
 import random
-from asteroid import Asteroid, StartAsteroid
+from asteroid import Asteroid, StandardAsteroid, HardenedAsteroid
 from constants import *
 from biome import Biome, biome_colors
 
@@ -34,9 +34,21 @@ class AsteroidField(pygame.sprite.Sprite):
 
     def spawn(self, position, z_value, scale, velocity, biome):
         match biome:
-            case Biome.START:
-                asteroid = StartAsteroid(position.x, position.y, z_value, scale)
+            case Biome.STANDARD:
+                asteroid = StandardAsteroid(position.x, position.y, z_value, scale)
                 asteroid.velocity = velocity
+            case Biome.HARDENED:
+                if scale == 3:
+                    asteroid = HardenedAsteroid(position.x, position.y, z_value, scale)
+                    asteroid.velocity = velocity
+                elif scale == 2:
+                    possible_splits = [StandardAsteroid, HardenedAsteroid]
+                    asteroid_class = random.choice(possible_splits)
+                    asteroid = asteroid_class(position.x, position.y, z_value, scale)
+                    asteroid.velocity = velocity
+                else:
+                    asteroid = StandardAsteroid(position.x, position.y, z_value, scale)
+                    asteroid.velocity = velocity
 
     def update(self, dt, current_biome):
         self.spawn_timer += dt

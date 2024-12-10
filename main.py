@@ -26,12 +26,9 @@ def game_loop():
     shield = Shield((SCREEN_WIDTH / 2), (SCREEN_HEIGHT / 2))
     asteroid_field = AsteroidField()
     current_score = 0
-    current_biome = Biome.START
+    current_biome = Biome.STANDARD
     # set up components necessary for the display and logic
     game_display = MainDisplay()
-    ui_color = biome_colors("UI", current_biome)
-    score_display = TextDisplay(SCORE_DIMENSIONS, ui_color, SCORE_FONT, current_score)
-    shield_charge_display = ShieldProgressDisplay(SHIELD_CHARGE_DIMENSIONS, SHIELD_CHARGE_POSITION, ui_color, SHIELD_CHARGE_RATE_COLOR, shield.current_charge, SHIELD_FULL_CHARGE, SHIELD_RECHARGE_RATE)
     game_clock = pygame.time.Clock()
     dt = 0
     while True:
@@ -46,6 +43,9 @@ def game_loop():
         dt = dt_ms / 1000 # converting to seconds
         # main logic
         # update and draw entities
+        ui_color = biome_colors("UI", current_biome)
+        score_display = TextDisplay(SCORE_DIMENSIONS, ui_color, SCORE_FONT, current_score)
+        shield_charge_display = ShieldProgressDisplay(SHIELD_CHARGE_DIMENSIONS, SHIELD_CHARGE_POSITION, ui_color, SHIELD_CHARGE_RATE_COLOR, shield.current_charge, SHIELD_FULL_CHARGE, SHIELD_RECHARGE_RATE)
         for entity in updatable:
             entity.update(dt, current_biome)
         for entity in drawable:

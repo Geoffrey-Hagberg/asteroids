@@ -1,5 +1,6 @@
 import pygame
 from constants import *
+from biome import biome_colors
 
 class MainDisplay:
     def __init__(self):
@@ -24,12 +25,12 @@ class TextDisplay:
         return text_surface
 
 class ProgressDisplay:
-    def __init__(self, dimensions, position, progress_color, rate_color, value, maximum, rate):
+    def __init__(self, dimensions, position, ui_color, rate_color, value, maximum, rate):
         self.dimensions = dimensions
         self.inner_dimensions = (dimensions[0] - 8, dimensions[1] - 8)
         self.position = position
         self.inner_position = (position[0] + 4, position[1] + 4)
-        self.progress_color = progress_color
+        self.ui_color = ui_color
         self.rate_color = rate_color
         self.value = value
         self.maximum = maximum
@@ -38,13 +39,13 @@ class ProgressDisplay:
         self.value = new_value
     def render_frame(self, surface):
         frame_rect = pygame.Rect(self.position[0], self.position[1], self.dimensions[0], self.dimensions[1])
-        frame = pygame.draw.rect(surface, "orange", frame_rect, 2)
+        frame = pygame.draw.rect(surface, self.ui_color, frame_rect, 2)
     def render_rate(self, surface, progress):
         rate_rect = pygame.Rect(self.inner_position, (((self.inner_dimensions[0] * progress) + self.rate), self.inner_dimensions[1]))
         rate_bar = pygame.draw.rect(surface, self.rate_color, rate_rect)
     def render_bar(self, surface, progress):
         progress_rect = pygame.Rect(self.inner_position, ((self.inner_dimensions[0] * progress), self.inner_dimensions[1]))
-        progress_bar = pygame.draw.rect(surface, self.progress_color, progress_rect)
+        progress_bar = pygame.draw.rect(surface, self.ui_color, progress_rect)
     def render_progress(self, game_display):
         progress = self.value / self.maximum
         self.render_frame(game_display)
@@ -55,8 +56,8 @@ class ProgressDisplay:
         full_bar = pygame.draw.rect(game_display, color, full_rect)
 
 class ShieldProgressDisplay(ProgressDisplay):
-    def __init__(self, dimensions, position, progress_color, rate_color, value, maximum, rate):
-        super().__init__(dimensions, position, progress_color, rate_color, value, maximum, rate)
+    def __init__(self, dimensions, position, ui_color, rate_color, value, maximum, rate):
+        super().__init__(dimensions, position, ui_color, rate_color, value, maximum, rate)
     def render_shield(self, game_display, shield):
         if shield.active:
             self.render_frame(game_display)
